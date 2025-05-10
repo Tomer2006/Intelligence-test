@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Intelligence Concept Test (Enhanced UI)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2; /* A nice blue */
+            --secondary-color: #50e3c2; /* A teal/green */
+            --accent-color: #f5a623; /* Orange for highlights */
+            --light-gray: #f7f9fa;
+            --medium-gray: #e0e6ed;
+            --dark-gray: #7d8da1;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #test-container {
+            background-color: var(--card-bg);
+            padding: 25px 35px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 95%;
+            max-width: 750px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            font-size: 0.95em;
+            color: var(--dark-gray);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        #progress-bar-container {
+            width: 100%;
+            background-color: var(--medium-gray);
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            border-radius: var(--border-radius);
+            transition: width 0.4s ease-in-out;
+        }
+
+        #question-counter {
+            font-size: 0.9em;
+            color: var(--dark-gray);
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        #problem-area {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            background-color: #fdfdfd;
+        }
+
+        .problem-item, .option-item-content {
+            min-width: 55px;
+            min-height: 55px;
+            border: 1px solid var(--medium-gray);
+            margin: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background-color: #fff;
+            padding: 8px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .problem-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.07);
+        }
+
+
+        .question-mark-styling {
+            font-size: 35px !important;
+            color: var(--accent-color) !important;
+            border: 2px dashed var(--accent-color) !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        #options-area {
+            display: flex;
+            justify-content: center; /* Center options */
+            align-items: stretch; /* Make buttons same height if content allows */
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            gap: 15px; /* Spacing between options */
+        }
+
+        .option-button {
+            padding: 0;
+            border: 2px solid var(--medium-gray);
+            background-color: var(--card-bg);
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            display: flex; /* To align content inside */
+            box-shadow: var(--box-shadow);
+            position: relative; /* For checkmark */
+        }
+        .option-button:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+        }
+        .option-button.selected {
+            border-color: var(--success-color);
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+        .option-button.selected::after { /* Checkmark for selected */
+            content: '✔';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            color: var(--success-color);
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .option-item-content { /* Make option content fill the button */
+            width: 100%;
+            height: 100%;
+            margin: 0; /* Remove margin if it's inside button */
+            box-shadow: none; /* Remove shadow from inner content */
+            border: none;
+        }
+
+
+        #navigation-area button, #restart-button {
+            padding: 12px 28px;
+            font-size: 1em;
+            font-weight: 500;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #navigation-area button:hover, #restart-button:hover {
+            background-color: #3a7bc8; /* Darker shade of primary */
+            transform: translateY(-1px);
+        }
+        #navigation-area button:active, #restart-button:active {
+            transform: translateY(0px);
+        }
+        #navigation-area button:disabled {
+            background-color: var(--medium-gray);
+            color: var(--dark-gray);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        #restart-button {
+            background-color: var(--accent-color);
+        }
+         #restart-button:hover {
+            background-color: #e09013;
+        }
+
+
+        #score-area {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            background-color: #fdfdfd;
+            text-align: left; /* Align text to left for readability */
+        }
+        #score-area h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        #score-area p {
+            font-size: 0.95em;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        #score-area strong {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        #score-area .final-score-display {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--success-color);
+            text-align: center;
+            margin: 15px 0;
+        }
+         #score-area .final-score-display.negative {
+            color: var(--danger-color);
+        }
+        #score-area .disclaimer {
+            font-size: 0.85em;
+            color: var(--dark-gray);
+            border-top: 1px solid var(--medium-gray);
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+
+        /* Shape Styling */
+        .shape { width: 38px; height: 38px; }
+        .circle { border-radius: 50%; }
+        .square { border-radius: 4px; }
+        .triangle { width: 0; height: 0; border-left: 19px solid transparent; border-right: 19px solid transparent; border-bottom-width: 33px; border-bottom-style: solid; }
+        
+        .small .shape { width: 28px; height: 28px; }
+        .small .triangle { border-left-width: 14px; border-right-width: 14px; border-bottom-width: 24px; }
+        .large .shape { width: 48px; height: 48px; }
+        .large .triangle { border-left-width: 24px; border-right-width: 24px; border-bottom-width: 42px; }
+
+        .red { background-color: #FF6B6B; } .border-red { border-bottom-color: #FF6B6B !important; }
+        .blue { background-color: #4ECDC4; } .border-blue { border-bottom-color: #4ECDC4 !important; }
+        .green { background-color: #A8E6CF; } .border-green { border-bottom-color: #A8E6CF !important; }
+        .yellow { background-color: #FFD166; } .border-yellow { border-bottom-color: #FFD166 !important; }
+        .purple { background-color: #C3AED6; } .border-purple { border-bottom-color: #C3AED6 !important; }
+        .orange { background-color: #FFA07A; } .border-orange { border-bottom-color: #FFA07A !important; }
+
+    </style>
+</head>
+<body>
+    <div id="test-container">
+        <h1>Fluid Intelligence Concept Test</h1>
+        <p class="instructions">Welcome! This test presents a series of visual puzzles. Your task is to identify the underlying pattern or logical rule in each problem and select the option that best completes or fits it. There's no time limit per question, so take your time to think carefully.</p>
+        
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="question-counter"></div>
+
+        <div id="problem-area">
+            <!-- Problem will be rendered here -->
+        </div>
+
+        <div id="options-area">
+            <!-- Options will be rendered here -->
+        </div>
+
+        <div id="navigation-area">
+            <button id="submit-answer" disabled>Submit Answer</button>
+        </div>
+
+        <div id="score-area" style="display: none;">
+            <!-- Score and explanation will be displayed here -->
+        </div>
+        <button id="restart-button" style="display:none; margin-top: 20px;">Restart Test</button>
+    </div>
+
+    <script>
+        const problemArea = document.getElementById('problem-area');
+        const optionsArea = document.getElementById('options-area');
+        const submitButton = document.getElementById('submit-answer');
+        const scoreArea = document.getElementById('score-area');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCounter = document.getElementById('question-counter');
+        const restartButton = document.getElementById('restart-button');
+        const testContainerParts = [
+            document.querySelector('h1'),
+            document.querySelector('.instructions'),
+            document.getElementById('progress-bar-container'),
+            document.getElementById('question-counter'),
+            problemArea,
+            optionsArea,
+            document.getElementById('navigation-area')
+        ];
+
+
+        let currentProblemIndex = 0;
+        let userRawScore = 0;
+        let selectedOptionButton = null;
+
+        // --- Helper functions for rendering items ---
+        function renderDots(count, isOption = false) {
+            let dotsHtml = `<div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width:100%; height:100%;">`;
+            for(let i=0; i<count; i++) {
+                dotsHtml += `<div style="width:8px; height:8px; background-color: var(--text-color); border-radius: 50%; margin: 2px;"></div>`;
+            }
+            dotsHtml += `</div>`;
+            return isOption ? `<div class="option-item-content">${dotsHtml}</div>` : `<div class="problem-item">${dotsHtml}</div>`;
+        }
+
+        function arrow(direction, isOption = false) {
+            let rotation = '0deg';
+            if (direction === 'right') rotation = '0deg'; 
+            if (direction === 'down') rotation = '90deg';
+            if (direction === 'left') rotation = '180deg';
+            if (direction === 'up') rotation = '270deg';
+            const arrowHtml = `<div style="font-size: 2.5em; transform: rotate(${rotation}); display:inline-block; line-height:1; color: var(--text-color);">&rarr;</div>`;
+            return isOption ? `<div class="option-item-content">${arrowHtml}</div>` : `<div class="problem-item">${arrowHtml}</div>`;
+        }
+
+        function createShape(shapeType, color, size = '', additionalItemClass = '', isOption = false) {
+            const shapeClass = shapeType; 
+            const colorClass = color;     
+            const sizeClass = size;       
+            
+            let effectiveColorClass = colorClass;
+            if (shapeType === 'triangle') {
+                effectiveColorClass = `border-${colorClass}`;
+            }
+
+            const innerShapeHtml = `<div class="shape ${shapeClass} ${effectiveColorClass}"></div>`;
+            const containerClass = isOption ? "option-item-content" : "problem-item";
+            
+            return `<div class="${containerClass} ${sizeClass} ${additionalItemClass}">${innerShapeHtml}</div>`;
+        }
+        
+        function createText(text, scaleX = 1, isOption = false) {
+            const textHtml = `<div style="font-size: 2em; transform: scaleX(${scaleX}); line-height:1; color: var(--text-color);">${text}</div>`;
+            return isOption ? `<div class="option-item-content">${textHtml}</div>` : `<div class="problem-item">${textHtml}</div>`;
+        }
+
+        function createLine(rotationDeg, isOption = false) {
+            const lineHtml = `<div style="width: 38px; height: 5px; background-color: var(--text-color); transform: rotate(${rotationDeg}deg); margin: auto; border-radius: 2px;"></div>`;
+            return isOption ? `<div class="option-item-content">${lineHtml}</div>` : `<div class="problem-item">${lineHtml}</div>`;
+        }
+
+        const Q_MARK = `<div class="problem-item question-mark-styling">?</div>`;
+
+        // --- Problem Definitions (same 20 problems) ---
+        const problems = [
+            // (Problems 1-20 are the same as in the previous version, using the helper functions)
+            // For brevity, I'm not repeating all 20 problem definitions here.
+            // Assume they are the same as the ones in the 20-question example.
+            // Example of how problem 1 would look with the new helpers:
+            { 
+                difficulty: 10, correctAnswerValue: 'triangle_red',
+                display: () => {
+                    problemArea.innerHTML = createShape('circle', 'blue') + createShape('square', 'green') + Q_MARK;
+                    return [
+                        { value: 'triangle_red', content: createShape('triangle', 'red', '', '', true) },
+                        { value: 'circle_blue', content: createShape('circle', 'blue', '', '', true) },
+                        { value: 'square_yellow', content: createShape('square', 'yellow', '', '', true) },
+                        { value: 'triangle_green', content: createShape('triangle', 'green', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 15, correctAnswerValue: 'square_green_bottom_right',
+                display: () => { 
+                    problemArea.innerHTML = createShape('circle', 'red') + createShape('square', 'blue') + createShape('circle', 'green') + Q_MARK;
+                    return [
+                        { value: 'circle_red_tr', content: createShape('circle', 'red', '', '', true) },
+                        { value: 'square_blue_tl', content: createShape('square', 'blue', '', '', true) },
+                        { value: 'circle_green_bl', content: createShape('circle', 'green', '', '', true) },
+                        { value: 'square_green_bottom_right', content: createShape('square', 'green', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 12, correctAnswerValue: 'dots_4',
+                display: () => {
+                    problemArea.innerHTML = renderDots(1) + renderDots(2) + renderDots(3) + Q_MARK;
+                    return [
+                        { value: 'dots_5', content: renderDots(5, true) }, { value: 'dots_2', content: renderDots(2, true) },
+                        { value: 'dots_4', content: renderDots(4, true) }, { value: 'dots_6', content: renderDots(6, true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 18, correctAnswerValue: 'shape_yellow_circle', 
+                display: () => {
+                    problemArea.innerHTML = `<p style="font-size:1.1em; width:100%; color: var(--text-color);">Which one is different?</p>`;
+                    return [
+                        { value: 'shape_blue_square', content: createShape('square', 'blue', '', '', true) },
+                        { value: 'shape_red_square', content: createShape('square', 'red', '', '', true) },
+                        { value: 'shape_yellow_circle', content: createShape('circle', 'yellow', '', '', true) },
+                        { value: 'shape_green_square', content: createShape('square', 'green', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 20, correctAnswerValue: 'arrow_down', 
+                display: () => {
+                    problemArea.innerHTML = arrow('right') + Q_MARK;
+                    return [
+                        { value: 'arrow_right', content: arrow('right', true) }, { value: 'arrow_down', content: arrow('down', true) },
+                        { value: 'arrow_left', content: arrow('left', true) }, { value: 'arrow_up', content: arrow('up', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 10, correctAnswerValue: 'blue',
+                display: () => {
+                    problemArea.innerHTML = createShape('square', 'red') + createShape('square', 'green') + createShape('square', 'yellow') + Q_MARK;
+                    return [
+                        { value: 'red', content: createShape('square', 'red', '', '', true) }, { value: 'blue', content: createShape('square', 'blue', '', '', true) },
+                        { value: 'yellow', content: createShape('square', 'yellow', '', '', true) }, { value: 'green', content: createShape('square', 'green', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 12, correctAnswerValue: 'square',
+                display: () => {
+                    problemArea.innerHTML = createShape('circle', 'blue') + createShape('square', 'blue') + createShape('triangle', 'blue') + createShape('circle', 'blue') + Q_MARK;
+                    return [
+                        { value: 'circle', content: createShape('circle', 'blue', '', '', true) }, { value: 'square', content: createShape('square', 'blue', '', '', true) },
+                        { value: 'triangle', content: createShape('triangle', 'blue', '', '', true) }, { value: 'star', content: createText('★', 1, true) } 
+                    ];
+                }
+            },
+            { 
+                difficulty: 22, correctAnswerValue: '4_red_circles',
+                display: () => { 
+                    problemArea.innerHTML = renderDots(1) + createShape('circle', 'red') + renderDots(2) + createShape('square', 'blue') + renderDots(3) + createShape('triangle', 'green') + Q_MARK.replace('problem-item', 'problem-item small') + Q_MARK; // Adjusted Q_MARKs
+                    return [
+                        { value: '4_yellow_squares', content: renderDots(4,true) + createShape('square', 'yellow', '', '', true) },
+                        { value: '4_red_circles', content: renderDots(4,true) + createShape('circle', 'red', '', '', true) },
+                        { value: '3_blue_triangles', content: renderDots(3,true) + createShape('triangle', 'blue', '', '', true) },
+                        { value: '5_green_squares', content: renderDots(5,true) + createShape('square', 'green', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 14, correctAnswerValue: 'dots_8',
+                display: () => {
+                    problemArea.innerHTML = renderDots(2) + renderDots(4) + renderDots(6) + Q_MARK;
+                    return [
+                        { value: 'dots_7', content: renderDots(7, true) }, { value: 'dots_8', content: renderDots(8, true) },
+                        { value: 'dots_9', content: renderDots(9, true) }, { value: 'dots_10', content: renderDots(10, true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 16, correctAnswerValue: 'blue_square',
+                display: () => {
+                    problemArea.innerHTML = createShape('circle', 'red') + createShape('circle', 'blue') + createShape('square', 'red') + Q_MARK;
+                    return [
+                        { value: 'red_circle', content: createShape('circle', 'red', '', '', true) }, { value: 'blue_square', content: createShape('square', 'blue', '', '', true) },
+                        { value: 'red_square', content: createShape('square', 'red', '', '', true) }, { value: 'blue_circle', content: createShape('circle', 'blue', '', '', true) }
+                    ];
+                }
+            },
+             { 
+                difficulty: 17, correctAnswerValue: 'blue_triangle',
+                display: () => {
+                    problemArea.innerHTML = createShape('circle', 'red') + createShape('circle', 'blue') + createShape('triangle', 'red') + Q_MARK;
+                    return [
+                        { value: 'blue_square', content: createShape('square', 'blue', '', '', true) },
+                        { value: 'red_circle', content: createShape('circle', 'red', '', '', true) },
+                        { value: 'blue_triangle', content: createShape('triangle', 'blue', '', '', true) },
+                        { value: 'red_triangle', content: createShape('triangle', 'red', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 15, correctAnswerValue: 'large_green_triangle',
+                display: () => {
+                    problemArea.innerHTML = `<p style="font-size:1.1em; width:100%; color: var(--text-color);">Which one is different?</p>`;
+                    return [
+                        { value: 'small_red_circle', content: createShape('circle', 'red', 'small', '', true) },
+                        { value: 'small_blue_square', content: createShape('square', 'blue', 'small', '', true) },
+                        { value: 'large_green_triangle', content: createShape('triangle', 'green', 'large', '', true) },
+                        { value: 'small_yellow_circle', content: createShape('circle', 'yellow', 'small', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 18, correctAnswerValue: 'shape_with_3_dots',
+                display: () => {
+                    problemArea.innerHTML = `<p style="font-size:1.1em; width:100%; color: var(--text-color);">Which one is different?</p>`;
+                    return [
+                        { value: 'shape_with_2_dots_A', content: renderDots(2, true) }, { value: 'shape_with_2_dots_B', content: renderDots(2, true) },
+                        { value: 'shape_with_3_dots', content: renderDots(3, true) }, { value: 'shape_with_2_dots_C', content: renderDots(2, true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 16, correctAnswerValue: 'arrow_up',
+                display: () => {
+                    problemArea.innerHTML = `<p style="font-size:1.1em; width:100%; color: var(--text-color);">Which one is different?</p>`;
+                    return [
+                        { value: 'arrow_right_A', content: arrow('right', true) }, { value: 'arrow_right_B', content: arrow('right', true) },
+                        { value: 'arrow_up', content: arrow('up', true) }, { value: 'arrow_right_C', content: arrow('right', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 19, correctAnswerValue: 'line_135', 
+                display: () => {
+                    problemArea.innerHTML = createLine(0) + createLine(45) + createLine(90) + Q_MARK;
+                    return [
+                        { value: 'line_0', content: createLine(0, true) }, { value: 'line_90', content: createLine(90, true) },
+                        { value: 'line_135', content: createLine(135, true) }, { value: 'line_180', content: createLine(180, true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 17, correctAnswerValue: 'L_mirrored',
+                display: () => {
+                    problemArea.innerHTML = createText('F') + createText('F', -1) + createText('L') + Q_MARK;
+                    return [
+                        { value: 'L_normal', content: createText('L', 1, true) }, { value: 'F_mirrored', content: createText('F', -1, true) },
+                        { value: 'L_mirrored', content: createText('L', -1, true) }, { value: 'J_normal', content: createText('J', 1, true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 18, correctAnswerValue: 'blue_square',
+                display: () => {
+                    problemArea.innerHTML = createShape('circle', 'red') + createText(':',1,false) + createShape('circle', 'blue') + createText('::',1,false) + createShape('square', 'red') + createText(':',1,false) + Q_MARK;
+                    return [
+                        { value: 'red_circle', content: createShape('circle', 'red', '', '', true) }, { value: 'blue_square', content: createShape('square', 'blue', '', '', true) },
+                        { value: 'blue_circle', content: createShape('circle', 'blue', '', '', true) }, { value: 'red_square', content: createShape('square', 'red', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 15, correctAnswerValue: 'yellow_triangle',
+                display: () => {
+                    problemArea.innerHTML = `<div style="width:100%; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:10px; color: var(--text-color);">Set: ${createShape('circle', 'red')} ${createShape('square', 'blue')} </div> <p style="font-size:1.1em; width:100%; color: var(--text-color);">Which belongs to the set?</p>`;
+                    return [
+                        { value: 'green_square', content: createShape('square', 'green', '', '', true) },
+                        { value: 'yellow_triangle', content: createShape('triangle', 'yellow', '', '', true) },
+                        { value: 'orange_circle', content: createShape('circle', 'orange', '', '', true) },
+                        { value: 'purple_square', content: createShape('square', 'purple', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 25, correctAnswerValue: 'green_triangle',
+                display: () => {
+                    problemArea.innerHTML = createShape('square', 'red') + createShape('square', 'blue') + createShape('circle', 'blue') + createShape('circle', 'green') + Q_MARK;
+                    return [
+                        { value: 'blue_triangle', content: createShape('triangle', 'blue', '', '', true) },
+                        { value: 'green_square', content: createShape('square', 'green', '', '', true) },
+                        { value: 'red_circle', content: createShape('circle', 'red', '', '', true) },
+                        { value: 'green_triangle', content: createShape('triangle', 'green', '', '', true) }
+                    ];
+                }
+            },
+            { 
+                difficulty: 28, correctAnswerValue: 'red_square',
+                display: () => {
+                    problemArea.style.maxWidth = '240px'; 
+                    problemArea.innerHTML = 
+                        createShape('circle', 'red') + createShape('square', 'blue') + createShape('triangle', 'green') +
+                        createShape('square', 'green') + createShape('triangle', 'red') + createShape('circle', 'blue') +
+                        createShape('triangle', 'blue') + createShape('circle', 'green') + Q_MARK;
+                    return [
+                        { value: 'red_square', content: createShape('square', 'red', '', '', true) },
+                        { value: 'blue_triangle', content: createShape('triangle', 'blue', '', '', true) },
+                        { value: 'green_circle', content: createShape('circle', 'green', '', '', true) },
+                        { value: 'red_circle', content: createShape('circle', 'red', '', '', true) }
+                    ];
+                }
+            }
+        ];
+
+
+        const MAX_POSSIBLE_RAW_SCORE = problems.reduce((sum, p) => sum + p.difficulty, 0);
+        const ASSUMED_AVERAGE_RAW_SCORE = MAX_POSSIBLE_RAW_SCORE * 0.50; // Placeholder!
+
+
+        function displayCurrentProblem() {
+            problemArea.style.maxWidth = '750px'; 
+            if (currentProblemIndex < problems.length) {
+                const problem = problems[currentProblemIndex];
+                const optionsData = problem.display(); 
+
+                optionsArea.innerHTML = '';
+                optionsData.forEach(opt => {
+                    const optionButton = document.createElement('button');
+                    optionButton.classList.add('option-button');
+                    optionButton.dataset.value = opt.value;
+                    optionButton.innerHTML = opt.content; 
+                    optionButton.addEventListener('click', () => selectOption(optionButton, opt.value));
+                    optionsArea.appendChild(optionButton);
+                });
+                
+                submitButton.disabled = true;
+                selectedOptionButton = null;
+                updateProgressBar();
+                questionCounter.textContent = `Problem ${currentProblemIndex + 1} of ${problems.length}`;
+
+            } else {
+                endTest();
+            }
+        }
+
+        function selectOption(buttonElement, value) {
+            if (selectedOptionButton) {
+                selectedOptionButton.classList.remove('selected');
+            }
+            selectedOptionButton = buttonElement;
+            selectedOptionButton.classList.add('selected');
+            submitButton.disabled = false;
+        }
+
+        submitButton.addEventListener('click', () => {
+            if (!selectedOptionButton) return;
+
+            const problem = problems[currentProblemIndex];
+            const selectedValue = selectedOptionButton.dataset.value;
+
+            if (selectedValue === problem.correctAnswerValue) {
+                userRawScore += problem.difficulty;
+            }
+
+            currentProblemIndex++;
+            displayCurrentProblem();
+        });
+        
+        restartButton.addEventListener('click', () => {
+            currentProblemIndex = 0;
+            userRawScore = 0;
+            scoreArea.style.display = 'none';
+            scoreArea.innerHTML = ''; // Clear previous explanation
+            
+            testContainerParts.forEach(part => part.style.display = ''); // Show all test parts
+            restartButton.style.display = 'none';
+            displayCurrentProblem();
+        });
+
+        function updateProgressBar() {
+            const progressPercentage = (currentProblemIndex / problems.length) * 100;
+            progressBar.style.width = progressPercentage + '%';
+        }
+
+        function endTest() {
+            testContainerParts.forEach(part => part.style.display = 'none'); // Hide all test parts
+
+            let finalScore;
+            let performanceRatio = 0;
+            if (ASSUMED_AVERAGE_RAW_SCORE > 0) { // Avoid division by zero
+                performanceRatio = userRawScore / ASSUMED_AVERAGE_RAW_SCORE;
+                finalScore = (performanceRatio - 1) * 100;
+            } else {
+                finalScore = userRawScore > 0 ? Infinity : 0; 
+            }
+            
+            scoreArea.innerHTML = `
+                <h2>Test Results & Score Explanation</h2>
+                <p><strong>Your Raw Score:</strong> ${userRawScore}</p>
+                <p><strong>Max Possible Raw Score for this test:</strong> ${MAX_POSSIBLE_RAW_SCORE}</p>
+                <p>This "Raw Score" is calculated by summing the 'difficulty points' assigned to each question you answered correctly. More complex questions contribute more points.</p>
+                
+                <hr style="margin: 20px 0; border-color: var(--medium-gray);">
+
+                <p><strong>Assumed Average Raw Score:</strong> ${ASSUMED_AVERAGE_RAW_SCORE.toFixed(0)}</p>
+                <p>For this conceptual demonstration, we've <em>assumed</em> an average person would score ${ASSUMED_AVERAGE_RAW_SCORE.toFixed(0)} points on these specific 20 questions. 
+                   <strong>Important:</strong> In a real, scientifically validated intelligence test, this 'Average Raw Score' is determined by testing a very large, representative group of people (a process called 'norming'). The value used here is a placeholder for demonstration purposes.</p>
+
+                <p><strong>Your Performance Ratio:</strong> ${performanceRatio.toFixed(3)} (Your Raw Score / Assumed Average Raw Score)</p>
+                <p>This ratio compares your performance to the assumed average.
+                    <ul>
+                        <li>A ratio of 1.0 means you performed exactly at the assumed average.</li>
+                        <li>A ratio greater than 1.0 means you performed better than the assumed average.</li>
+                        <li>A ratio less than 1.0 means you performed below the assumed average.</li>
+                    </ul>
+                </p>
+                
+                <hr style="margin: 20px 0; border-color: var(--medium-gray);">
+
+                <h3>Your Final Conceptual Score:</h3>
+                <div class="final-score-display ${finalScore < 0 ? 'negative' : ''}">${finalScore.toFixed(1)}</div>
+                <p>This score is calculated as: <strong>(Performance Ratio - 1) * 100</strong>.</p>
+                <p>It reflects your performance relative to the <em>assumed average</em> for this specific set of questions:</p>
+                <ul>
+                    <li>A score of <strong>0</strong> means your performance matched the assumed average.</li>
+                    <li>A score of <strong>+10</strong> means your performance was 10% better than the assumed average.</li>
+                    <li>A score of <strong>-10</strong> means your performance was 10% worse than the assumed average.</li>
+                    <li>And so on for other values (e.g., +25 is 25% better, -30 is 30% worse).</li>
+                </ul>
+                <p>The score can theoretically go very high if your raw score far exceeds the assumed average for this limited set of problems.</p>
+
+                <div class="disclaimer">
+                    <strong>Disclaimer:</strong> This is a conceptual demonstration of a fluid intelligence test and its scoring. It is <strong>not</strong> a scientifically validated psychometric instrument. The "untrainable" nature and "no upper limit" aspects are highly simplified here. The scores generated are relative only to the pre-defined problem difficulties and the <em>assumed average</em> for this specific, limited set of 20 questions. This test is for educational and entertainment purposes only and should not be used for any formal assessment of intelligence.
+                </div>
+            `;
+            scoreArea.style.display = 'block';
+            restartButton.style.display = 'block'; // Keep as inline-block if preferred
+            // Center the restart button if it's the only thing visible below the score
+            restartButton.style.margin = '20px auto'; 
+            restartButton.style.display = 'block'; 
+
+        }
+
+        // Initial call
+        displayCurrentProblem();
+    </script>
+</body>
+</html>
